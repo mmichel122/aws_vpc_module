@@ -39,14 +39,14 @@ resource "aws_subnet" "Public_subnet" {
 
 # Create Nat gateway
 resource "aws_nat_gateway" "gw" {
-  count         = "${aws_subnet.Public_subnet.count}"
+  count         = "${var.sub_count}"
   allocation_id = "${element(aws_eip.nat.*.id, count.index)}"
   subnet_id     = "${element(aws_subnet.Public_subnet.*.id, count.index)}"
 }
 
 # Create EIP for the Nat Gateway.
 resource "aws_eip" "nat" {
-  count = "${aws_subnet.Public_subnet.count}"
+  count = "${var.sub_count}"
   vpc   = true
 }
 
@@ -80,7 +80,7 @@ resource "aws_route_table" "public_vpc" {
 
 # Create Private Route table for Internet access
 resource "aws_route_table" "private_vpc" {
-  count  = "${aws_subnet.Private_subnet.count}"
+  count  = "${var.sub_count}"
   vpc_id = "${aws_vpc.vpc.id}"
 
   route {
